@@ -37,3 +37,10 @@ def test_dropping_the_shutdown_adds_workdays(app):
     shutdown.uncheck().run()
     after = int(app.metric[0].value.replace(",", ""))
     assert after > before
+
+
+def test_days_off_use_the_policy_spelling_of_holiday_names(app):
+    # python-holidays now calls it "Thanksgiving Day"; the preset says "Thanksgiving".
+    names = set(app.dataframe[0].value["name"])
+    assert "Thanksgiving" in names
+    assert "Thanksgiving Day" not in names

@@ -32,7 +32,10 @@ with st.sidebar:
         if not base.market:
             names = source_holiday_names(base, today.year)
             default = names if base.observe is None else [n for n in names if any(names_match(n, o) for o in base.observe)]
-            raw["observe"] = st.multiselect("Public holidays observed", names, default=default)
+            picked = st.multiselect("Public holidays observed", names, default=default)
+            # keep the policy's own spelling (e.g. "Thanksgiving") so output names don't follow upstream renames
+            own = base.observe or []
+            raw["observe"] = [next((o for o in own if names_match(o, n)), n) for n in picked]
             rules = ["nearest_workday", "previous_workday", "next_workday", "none"]
             obs = raw.setdefault("observance", {})
             obs["default"] = st.selectbox("Weekend holiday is observed on", rules, index=rules.index(obs.get("default", "nearest_workday")))
