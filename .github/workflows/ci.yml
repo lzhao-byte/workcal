@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 14 * * 1"  # weekly: catch upstream changes in python-holidays (e.g. the "Thanksgiving" -> "Thanksgiving Day" rename)
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --only-group dev ruff check .
+      - run: uv run --only-group dev ruff format --check .
+
+  test:
+    name: test (py${{ matrix.python }}, ${{ matrix.resolution }} deps)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+        resolution: [highest]
+        include:
+          - python: "3.11"
+            resolution: lowest-direct  # holidays 0.41, pandas 2.0, numpy 1.24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --all-extras --resolution ${{ matrix.resolution }}
+      - run: uv run --no-sync pytest --cov=workcal --cov-report=term-missing
