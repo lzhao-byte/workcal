@@ -4,6 +4,8 @@ version = "2.0.0"
 description = "Company holiday policies as config: workday counts, WORKDAY()-style date math, and a dim_date table."
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Liuhui Zhao" }]
 dependencies = [
     "holidays>=0.41",
     "numpy>=1.24",
