@@ -1,9 +1,10 @@
 import datetime as dt
+import tomllib
 
 import pytest
 
 from workcal import Policy, PolicyError, WorkCalendar, list_presets, load_policy
-from workcal.policy import names_match
+from workcal.policy import dumps_policy, load_policy_dict, names_match
 
 
 def cal(**overrides) -> WorkCalendar:
@@ -147,3 +148,23 @@ def test_all_presets_load_and_build():
 def test_unknown_preset():
     with pytest.raises(PolicyError, match="no preset"):
         load_policy("atlantis")
+
+
+# ---------------------------------------------------------------- TOML round trip
+@pytest.mark.parametrize("preset", list_presets())
+def test_presets_round_trip_through_toml(preset):
+    raw = load_policy_dict(preset)
+    assert tomllib.loads(dumps_policy(raw)) == raw
+
+
+def test_round_trip_with_awkward_strings_and_empty_arrays():
+    raw = {
+        "name": 'Acme "West" — plant #2',
+        "description": "line one\nline two\ttabbed \\ backslash, ünïcode",
+        "country": "US",
+        "observe": ["New Year's Day"],
+        "extra": [],
+        "observance": {"default": "none", "official": False, "overrides": {"New Year's Day": "next_workday"}},
+        "shutdown": [{"name": "x", "start": {"month": 12, "day": 24}, "end": {"observed": "Christmas Day", "offset_days": 1}}],
+    }
+    assert tomllib.loads(dumps_policy(raw)) == raw

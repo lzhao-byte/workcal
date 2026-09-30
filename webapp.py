@@ -5,10 +5,9 @@ import datetime as dt
 import tomllib
 
 import streamlit as st
-import tomli_w
 
 from workcal import Policy, PolicyError, WorkCalendar, list_presets, source_holiday_names
-from workcal.policy import WEEKDAY_NAMES, load_policy_dict, names_match
+from workcal.policy import WEEKDAY_NAMES, dumps_policy, load_policy_dict, names_match
 
 st.set_page_config(page_title="Workday Calculator", page_icon=":material/calendar_month:", layout="wide")
 today = dt.date.today()
@@ -47,7 +46,7 @@ with st.sidebar:
         st.error(str(exc), icon=":material/error:")
         st.stop()
 
-    st.download_button("Download this policy (.toml)", tomli_w.dumps(raw), file_name="holiday_policy.toml")
+    st.download_button("Download this policy (.toml)", dumps_policy(raw), file_name="holiday_policy.toml")
 
 # ---------------------------------------------------------------- outputs
 st.title("Workday Calculator")

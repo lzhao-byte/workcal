@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-app = ["streamlit>=1.40", "tomli-w>=1.0"]
+app = ["streamlit>=1.40"]
 parquet = ["pyarrow>=14"]
 
 [project.scripts]

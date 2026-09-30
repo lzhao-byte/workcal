@@ -7,6 +7,7 @@ silently producing a wrong workday count.
 
 from __future__ import annotations
 
+import json
 import re
 import tomllib
 from dataclasses import dataclass, field
@@ -187,6 +188,46 @@ class Policy:
             extras=tuple(extras),
             shutdowns=tuple(shutdowns),
         )
+
+
+def _toml_key(key: str) -> str:
+    return key if re.fullmatch(r"[A-Za-z0-9_-]+", key) else json.dumps(key, ensure_ascii=False)
+
+
+def _toml_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, int | float):
+        return repr(value)
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False)  # JSON string escapes are valid TOML basic-string escapes
+    if isinstance(value, list | tuple):
+        return "[" + ", ".join(_toml_value(v) for v in value) + "]"
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{_toml_key(k)} = {_toml_value(v)}" for k, v in value.items()) + " }" if value else "{}"
+    raise TypeError(f"cannot write {type(value).__name__} to TOML")
+
+
+def dumps_policy(raw: dict[str, Any]) -> str:
+    """Serialize a policy dict (the shape ``load_policy_dict`` returns) back to TOML.
+
+    Covers the policy schema only (scalars, lists, tables, arrays of tables), so the app can offer
+    "download this policy" without an extra dependency.
+    """
+    lines, tables, arrays = [], [], []
+    for key, value in raw.items():
+        if isinstance(value, dict):
+            tables.append((key, value))
+        elif isinstance(value, list) and value and all(isinstance(v, dict) for v in value):
+            arrays.append((key, value))
+        else:
+            lines.append(f"{_toml_key(key)} = {_toml_value(value)}")
+    for key, table in tables:
+        lines += ["", f"[{_toml_key(key)}]", *(f"{_toml_key(k)} = {_toml_value(v)}" for k, v in table.items())]
+    for key, items in arrays:
+        for item in items:
+            lines += ["", f"[[{_toml_key(key)}]]", *(f"{_toml_key(k)} = {_toml_value(v)}" for k, v in item.items())]
+    return "\n".join(lines) + "\n"
 
 
 def list_presets() -> list[str]:

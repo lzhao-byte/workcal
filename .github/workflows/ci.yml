@@ -34,3 +34,16 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: uv sync --all-extras --resolution ${{ matrix.resolution }}
       - run: uv run --no-sync pytest --cov=workcal --cov-report=term-missing
+
+  streamlit-cloud:
+    # Community Cloud installs from uv.lock without extras and provides streamlit itself.
+    # Reproduce that so the live app (getworkdays.streamlit.app) can't break on a missing dependency again.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen --no-dev
+      - run: uv pip install streamlit pytest
+      - run: uv run --no-sync pytest tests/test_webapp.py -p no:doctest --override-ini="addopts=--import-mode=importlib"
