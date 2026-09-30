@@ -1,0 +1,8 @@
+name = "UK (England and Wales) bank holidays"
+description = "Bank holidays in England and Wales. A holiday on a weekend moves to the next weekday; if Christmas and Boxing Day both fall on a weekend, they take Monday and Tuesday."
+country = "GB"
+subdiv = "ENG"
+
+[observance]
+default = "next_workday"
+on_collision = "next_workday"

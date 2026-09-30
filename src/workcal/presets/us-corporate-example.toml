@@ -1,0 +1,42 @@
+name = "US corporate (example)"
+description = """
+A common US manufacturing/corporate pattern: 7 core holidays, plus the Friday after Thanksgiving,
+Christmas Eve, and a year-end shutdown through Dec 31. Weekend holidays are observed on the nearest
+weekday, except New Year's Day, which moves forward to Monday (so it stays in the new year).
+Copy this file and edit it to match your own company's policy."""
+country = "US"
+observe = [
+  "New Year's Day",
+  "Martin Luther King Jr. Day",
+  "Memorial Day",
+  "Independence Day",
+  "Labor Day",
+  "Thanksgiving",
+  "Christmas Day",
+  # Optional holidays some companies observe; uncomment to include:
+  # "Juneteenth National Independence Day",
+  # "Veterans Day",
+  # "Columbus Day",
+]
+
+[observance]
+default = "nearest_workday"
+overrides = { "New Year's Day" = "next_workday" }
+
+[[extra]]
+name = "Day after Thanksgiving"
+date = { holiday = "Thanksgiving", offset_days = 1 }
+
+[[extra]]
+name = "Christmas Eve"
+date = { month = 12, day = 24 }
+
+# [[extra]]
+# name = "Good Friday"
+# date = { easter = -2 }
+
+[[shutdown]]
+name = "Year-end shutdown"
+start = { observed = "Christmas Eve" }
+end = { month = 12, day = 31 }
+replaces = ["Christmas Eve", "Christmas Day"]

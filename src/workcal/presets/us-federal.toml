@@ -1,0 +1,6 @@
+name = "US federal"
+description = "US federal holidays (5 U.S.C. 6103). A holiday on Saturday is observed on Friday, and one on Sunday on Monday. New Year's Day can therefore be observed on Dec 31 of the previous year."
+country = "US"
+
+[observance]
+default = "nearest_workday"
