@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/lzhao-byte/workcal/actions/workflows/ci.yml/badge.svg)](https://github.com/lzhao-byte/workcal/actions/workflows/ci.yml)
 
+**Live app:** https://getworkdays.streamlit.app
+
 Official holiday calendars (from [python-holidays](https://github.com/vacanza/holidays)) tell you when *public* holidays fall. They don't tell you how many days *your company* actually works. Companies differ in:
 
 - which public holidays they observe,
