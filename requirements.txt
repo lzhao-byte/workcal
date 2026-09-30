@@ -1,5 +1,2 @@
-holidays==0.41
-numpy==1.24.4
-pandas==2.0.3
-python_dateutil==2.8.2
-streamlit==1.40.1
+# Used by Streamlit Community Cloud and the dev container. For development, use `uv sync`.
+.[app]
