@@ -218,7 +218,8 @@ def list_x_holidays(year_range=None, date_range=None,
     if date_range:
         years = range(date_range[0].year, date_range[1].year+1)
 
-    us_holidays = {(year, name.split(" (")[0]): dt for year in years for dt, name in country_holidays('US', years=year, observed=False).items()}
+    # newer versions of `holidays` renamed "Thanksgiving" to "Thanksgiving Day"
+    us_holidays = {(year, name.split(" (")[0].replace("Thanksgiving Day", "Thanksgiving")): dt for year in years for dt, name in country_holidays('US', years=year, observed=False).items()}
     x_holidays = {(year, name): dt for (year, name), dt in us_holidays.items() if name in x_obs_holidays}
 
     # get christmas eve

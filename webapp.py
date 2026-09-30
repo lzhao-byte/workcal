@@ -20,7 +20,7 @@ def get_range(formats):
     juneteenth = st.checkbox("Include Juneteenth?")
     good_friday = st.checkbox("Include Good Friday?")
     veteran = st.checkbox("Include Veteran's Day?")
-    columbus = st.checkbox("Include Colubums Day?")
+    columbus = st.checkbox("Include Columbus Day?")
     christmas = st.checkbox("Have Christmas Shutdown?")
     if st.button("Submit"):
         st.session_state.range_input = {'year': years, 'month': months, 'date': dates}
